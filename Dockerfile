@@ -1,5 +1,5 @@
 # Use NVIDIA CUDA base image
-FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
+FROM registry.hf.space/tencent-hunyuan3d-2:latest
 
 # Set working directory
 WORKDIR /app
