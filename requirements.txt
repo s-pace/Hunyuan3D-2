@@ -9,3 +9,4 @@ rembg
 onnxruntime
 #gevent
 #geventhttpclient
+PyYAML>=6.0

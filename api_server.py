@@ -31,6 +31,7 @@ from io import BytesIO
 import torch
 import trimesh
 import uvicorn
+import yaml
 from PIL import Image
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, FileResponse
