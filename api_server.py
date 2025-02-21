@@ -138,10 +138,17 @@ class ModelWorker:
         logger.info(f"Loading the model {model_path} on worker {worker_id} ...")
 
         self.rembg = BackgroundRemover()
-        self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path, device=device)
-        self.pipeline_t2i = HunyuanDiTPipeline('Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
-                                               device=device)
-        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(model_path)
+        self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
+            "/root/.cache/huggingface/hub/models--tencent--Hunyuan3D-2",
+            device=device
+        )
+        self.pipeline_t2i = HunyuanDiTPipeline(
+            '/root/.cache/huggingface/hub/models--Tencent-Hunyuan--HunyuanDiT-v1.1-Diffusers-Distilled',
+            device=device
+        )
+        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(
+            "/root/.cache/huggingface/hub/models--tencent--Hunyuan3D-2"
+        )
 
     def get_queue_length(self):
         if model_semaphore is None:
