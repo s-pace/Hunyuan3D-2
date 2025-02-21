@@ -36,7 +36,7 @@ RUN cd hy3dgen/texgen/differentiable_renderer && \
     cd ../../..
 
 # Expose port for API server
-EXPOSE 8080
+EXPOSE 8000
 
 # Default command to run API server
-CMD ["python3", "api_server.py", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["python3", "api_server.py", "--host", "0.0.0.0", "--port", "8000"]
