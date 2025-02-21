@@ -14,7 +14,7 @@ transformers
 numpy
 rembg
 
-# Note: pymeshlab is installed via conda
+# Note: pymeshlab and onnxruntime are installed via conda
 
 # Demo only
 torch>=2.1.0

@@ -22,8 +22,8 @@ ENV PATH="/opt/conda/bin:${PATH}"
 RUN conda create -n myenv python=3.10 -y
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
-# Install pymeshlab using conda
-RUN conda install -c conda-forge pymeshlab -y
+# Install conda packages
+RUN conda install -c conda-forge pymeshlab onnxruntime -y
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
