@@ -1,11 +1,8 @@
 # Demo only
-torch>=2.1.0
-trimesh
-Pillow
+gradio
 fastapi
 uvicorn
-numpy
 rembg
+onnxruntime
 #gevent
 #geventhttpclient
-PyYAML>=6.0
