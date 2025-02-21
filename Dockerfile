@@ -23,11 +23,8 @@ COPY . .
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
-# Copy only the API server code
-COPY api_server.py .
-
-# Expose the port the app runs on
+# Expose the port Gradio runs on (typically 7860)
 EXPOSE 8000
 
-# Command to run the API server with conda environment
-CMD ["python", "api_server.py"]
+# Command to run the Gradio app
+CMD ["python", "gradio_app.py"]
