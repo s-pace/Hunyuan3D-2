@@ -13,7 +13,6 @@ transformers
 # Additional dependencies
 numpy
 rembg
-onnxruntime==1.15.1
 
 # Note: pymeshlab is installed via conda
 
@@ -25,7 +24,6 @@ fastapi
 uvicorn
 numpy
 rembg
-onnxruntime
 #gevent
 #geventhttpclient
 PyYAML>=6.0
