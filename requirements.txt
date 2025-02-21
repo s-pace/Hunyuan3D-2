@@ -4,5 +4,9 @@ fastapi
 uvicorn
 rembg
 onnxruntime
+torch
+trimesh
+Pillow
+numpy
 #gevent
 #geventhttpclient
