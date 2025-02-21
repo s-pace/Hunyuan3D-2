@@ -32,8 +32,9 @@ import torch
 import trimesh
 import uvicorn
 from PIL import Image
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline, FloaterRemover, DegenerateFaceRemover, FaceReducer, \
@@ -240,9 +241,24 @@ app.add_middleware(
     allow_headers=["*"],  # 允许所有头部
 )
 
+# Initialize security scheme
+security = HTTPBearer()
+
+# Define the auth token
+AUTH_TOKEN = "robbinhasasmalldickbutyetheisagreatcollaboratortowrokwith"
+
+# Add this function to verify the token
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if credentials.credentials != AUTH_TOKEN:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token"
+        )
+    return credentials.credentials
+
 
 @app.post("/generate")
-async def generate(request: Request):
+async def generate(request: Request, token: str = Depends(verify_token)):
     logger.info("Worker generating...")
     params = await request.json()
     uid = uuid.uuid4()
@@ -275,7 +291,7 @@ async def generate(request: Request):
 
 
 @app.post("/send")
-async def generate(request: Request):
+async def generate(request: Request, token: str = Depends(verify_token)):
     logger.info("Worker send...")
     params = await request.json()
     uid = uuid.uuid4()
