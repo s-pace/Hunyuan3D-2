@@ -18,6 +18,10 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 # Add conda to path
 ENV PATH="/opt/conda/bin:${PATH}"
 
+# Create and activate conda environment
+RUN conda create -n myenv python=3.10 -y
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+
 # Install pymeshlab using conda
 RUN conda install -c conda-forge pymeshlab -y
 
@@ -33,5 +37,5 @@ COPY api_server.py .
 # Expose the port the app runs on
 EXPOSE 8000
 
-# Command to run the API server
-CMD ["python", "api_server.py"]
+# Command to run the API server with conda environment
+CMD ["conda", "run", "-n", "myenv", "python", "api_server.py"]
