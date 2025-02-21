@@ -4,6 +4,9 @@ FROM registry.hf.space/tencent-hunyuan3d-2:latest
 # Set working directory
 WORKDIR /app
 
+# Copy .python-version file
+COPY .python-version .
+
 # Set Python version explicitly
 ENV PYTHON_VERSION=3.11
 
