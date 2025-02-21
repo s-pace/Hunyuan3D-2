@@ -1,22 +1,3 @@
-# Core dependencies
-torch>=2.1.0
-fastapi
-uvicorn
-Pillow
-trimesh
-PyYAML>=6.0
-numpy>=2.0.0,<3.0.0
-
-# Hugging Face dependencies
-diffusers
-transformers
-
-# Image processing
-rembg
-
-# 3D processing
-pymeshlab>=2022.2.post1,<2023.12
-
 # Demo only
 torch>=2.1.0
 trimesh
