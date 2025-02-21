@@ -5,6 +5,7 @@ uvicorn
 Pillow
 trimesh
 PyYAML>=6.0
+numpy>=2.0.0,<3.0.0
 
 # Hugging Face dependencies
 diffusers
@@ -12,11 +13,9 @@ transformers
 
 # Image processing
 rembg
-numpy
 
 # 3D processing
-# Note: Install pymeshlab via conda:
-# conda install -c conda-forge pymeshlab
+pymeshlab>=2022.2.post1,<2023.12
 
 # Demo only
 torch>=2.1.0
@@ -29,6 +28,3 @@ rembg
 #gevent
 #geventhttpclient
 PyYAML>=6.0
-
-# Added from the code block
-pymeshlab
