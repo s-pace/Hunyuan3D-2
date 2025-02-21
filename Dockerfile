@@ -1,10 +1,17 @@
-FROM registry.hf.space/tencent-hunyuan3d-2:latest
+# Use NVIDIA CUDA base image
+FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
 
-# Expose port 7860 for the application
+# Set working directory
+WORKDIR /app
+
+# Install torch
+RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Expose the port Gradio runs on (typically 7860)
 EXPOSE 8000
 
-# Set platform for compatibility
-ENV DOCKER_DEFAULT_PLATFORM=linux/amd64
-
-# Command to run the application
-CMD ["python", "hg_app.py"]
+# Command to run the Gradio app
+CMD ["python", "gradio_app.py"]
