@@ -10,11 +10,13 @@ PyYAML>=6.0
 diffusers
 transformers
 
-# Additional dependencies
-numpy
+# Image processing
 rembg
+numpy
 
-# Note: pymeshlab and onnxruntime are installed via conda
+# 3D processing
+# Note: Install pymeshlab via conda:
+# conda install -c conda-forge pymeshlab
 
 # Demo only
 torch>=2.1.0
