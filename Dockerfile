@@ -1,30 +1,6 @@
 # Use the pre-built Hunyuan3D image
 FROM registry.hf.space/tencent-hunyuan3d-2:latest
 
-# Set working directory
-WORKDIR /app
-
-# Install system dependencies required for pymeshlab
-RUN apt-get update && apt-get install -y \
-    libglu1-mesa-dev \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Miniconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh
-
-# Add conda to path
-ENV PATH="/opt/conda/bin:${PATH}"
-
-# Create and activate conda environment
-RUN conda create -n myenv python=3.10 -y
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
-
-# Install conda packages
-RUN conda install -c conda-forge pymeshlab onnxruntime -y
-
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 
@@ -38,4 +14,4 @@ COPY api_server.py .
 EXPOSE 8000
 
 # Command to run the API server with conda environment
-CMD ["conda", "run", "-n", "myenv", "python", "api_server.py"]
+CMD ["python", "api_server.py"]
