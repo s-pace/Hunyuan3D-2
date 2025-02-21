@@ -1,8 +1,10 @@
-
 # Demo only
-gradio
+torch>=2.1.0
+trimesh
+Pillow
 fastapi
 uvicorn
+numpy
 rembg
 onnxruntime
 #gevent
