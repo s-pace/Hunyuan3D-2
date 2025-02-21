@@ -159,18 +159,16 @@ class ModelWorker:
 
         self.rembg = BackgroundRemover()
         self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
-            model_path,
-            subfolder=subfolder,
-            use_safetensors=True,
-            device=device,
+            "/root/.cache/huggingface/hub/models--tencent--Hunyuan3D-2",
+            device=device
         )
-        self.pipeline.enable_flashvdm(mc_algo='mc')
-        # self.pipeline_t2i = HunyuanDiTPipeline(
-        #     'Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
-        #     device=device
-        # )
-        if enable_tex:
-            self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(tex_model_path)
+        self.pipeline_t2i = HunyuanDiTPipeline(
+            '/root/.cache/huggingface/hub/models--Tencent-Hunyuan--HunyuanDiT-v1.1-Diffusers-Distilled',
+            device=device
+        )
+        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(
+            "/root/.cache/huggingface/hub/models--tencent--Hunyuan3D-2"
+        )
 
     def get_queue_length(self):
         if model_semaphore is None:
