@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Install PyTorch with CUDA support
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install pymeshlab torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # Copy the application code
 COPY . .
