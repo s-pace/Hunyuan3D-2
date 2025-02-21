@@ -37,7 +37,7 @@ security = HTTPBearer()
 
 # Add authentication dependency
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    if credentials.credentials != "rdqqsdqzdqs":
+    if credentials.credentials != "robbinisanamazingperson":
         raise HTTPException(
             status_code=401,
             detail="Invalid authentication token",
