@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 # Create a symbolic link for python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Install torch
-RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu117
+# Install torch with CUDA 11.8
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # Copy requirements file
 COPY requirements.txt .
