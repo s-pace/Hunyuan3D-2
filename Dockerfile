@@ -42,4 +42,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the Gradio app
-CMD ["python", "gradio_app.py"]
+CMD ["python", "api_server.py"]
