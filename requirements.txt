@@ -2,7 +2,7 @@
 torch>=2.1.0
 fastapi
 uvicorn
-pillow
+Pillow
 trimesh
 PyYAML>=6.0
 
@@ -13,12 +13,9 @@ transformers
 # Additional dependencies
 numpy
 rembg
-
-# Specify an older version of onnxruntime that's compatible
 onnxruntime==1.15.1
 
-# For pymeshlab, we need to install it via conda
-# Since we can't install it via pip in this environment
+# Note: pymeshlab is installed via conda
 
 # Demo only
 torch>=2.1.0
