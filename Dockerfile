@@ -7,7 +7,19 @@ WORKDIR /app
 # Install system dependencies required for pymeshlab
 RUN apt-get update && apt-get install -y \
     libglu1-mesa-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh
+
+# Add conda to path
+ENV PATH="/opt/conda/bin:${PATH}"
+
+# Install pymeshlab using conda
+RUN conda install -c conda-forge pymeshlab -y
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .

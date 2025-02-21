@@ -1,17 +1,24 @@
 # Core dependencies
-torch
+torch>=2.1.0
 fastapi
 uvicorn
 pillow
 trimesh
-pyyaml
+PyYAML>=6.0
 
 # Hugging Face dependencies
 diffusers
 transformers
 
-# Additional dependencies that might be needed by hy3dgen
+# Additional dependencies
 numpy
+rembg
+
+# Specify an older version of onnxruntime that's compatible
+onnxruntime==1.15.1
+
+# For pymeshlab, we need to install it via conda
+# Since we can't install it via pip in this environment
 
 # Demo only
 torch>=2.1.0
