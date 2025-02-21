@@ -25,3 +25,6 @@ onnxruntime
 #gevent
 #geventhttpclient
 PyYAML>=6.0
+
+# Added from the code block
+pymeshlab

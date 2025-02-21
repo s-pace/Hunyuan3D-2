@@ -4,6 +4,17 @@ FROM registry.hf.space/tencent-hunyuan3d-2:latest
 # Set working directory
 WORKDIR /app
 
+# Install system dependencies required for pymeshlab
+RUN apt-get update && apt-get install -y \
+    libglu1-mesa-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
+
 # Copy only the API server code
 COPY api_server.py .
 
