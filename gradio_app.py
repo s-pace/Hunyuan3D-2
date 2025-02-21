@@ -23,7 +23,8 @@ import gradio as gr
 import torch
 import trimesh
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 import uuid
 
@@ -31,6 +32,18 @@ from hy3dgen.shapegen.utils import logger
 
 MAX_SEED = int(1e7)
 
+# Add security scheme
+security = HTTPBearer()
+
+# Add authentication dependency
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if credentials.credentials != "rdqqsdqzdqs":
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return credentials.credentials
 
 def get_example_img_list():
     print('Loading example img list ...')
@@ -739,9 +752,41 @@ if __name__ == '__main__':
     degenerate_face_remove_worker = DegenerateFaceRemover()
     face_reduce_worker = FaceReducer()
 
-    # https://discuss.huggingface.co/t/how-to-serve-an-html-file/33921/2
-    # create a FastAPI app
+    # Modify FastAPI app creation to include auth
     app = FastAPI()
+    
+    # Add auth dependency to all routes
+    @app.middleware("http")
+    async def authenticate_requests(request, call_next):
+        if request.url.path.startswith("/static/"):
+            # Skip auth for static files
+            return await call_next(request)
+            
+        try:
+            auth_header = request.headers.get("Authorization")
+            if not auth_header or not auth_header.startswith("Bearer "):
+                raise HTTPException(
+                    status_code=401,
+                    detail="Invalid authentication credentials",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            token = auth_header.split(" ")[1]
+            if token != "rdqqsdqzdqs":
+                raise HTTPException(
+                    status_code=401,
+                    detail="Invalid token",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        except Exception as e:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+            
+        response = await call_next(request)
+        return response
+
     # create a static directory to store the static files
     static_dir = Path(SAVE_DIR).absolute()
     static_dir.mkdir(parents=True, exist_ok=True)
