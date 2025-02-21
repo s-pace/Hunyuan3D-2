@@ -13,8 +13,14 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PyTorch with CUDA support
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# Upgrade pip
+RUN python3 -m pip install --upgrade pip
+
+# Install PyTorch and CUDA first (with specific version)
+RUN pip3 install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
+
+# Install pytorch3d
+RUN pip3 install pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py310_cu121_pyt210/download.html
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
