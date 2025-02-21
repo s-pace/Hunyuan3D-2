@@ -13,15 +13,28 @@ torchvision
 #ipdb
 omegaconf
 
+#sentencepiece
+tqdm
+
+# Mesh Processing
+trimesh
+pymeshlab
+pygltflib
+xatlas
+#kornia
+#facexlib
+
+# Training
+accelerate
+#pytorch_lightning
+#scikit-learn
+#scikit-image
+
 # Demo only
 gradio
 fastapi
 uvicorn
 rembg
 onnxruntime
-torch
-trimesh
-Pillow
-numpy
 #gevent
 #geventhttpclient
