@@ -41,4 +41,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application
-CMD ["python3", "hg_app.py"]
+CMD ["python3", "api_server.py"]
