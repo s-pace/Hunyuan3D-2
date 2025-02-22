@@ -28,6 +28,7 @@ WORKDIR /app
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
+RUN pip install opencv-contrib-python
 
 # Copy application code
 COPY . .
