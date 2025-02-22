@@ -43,6 +43,10 @@ from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline, FloaterRemover, D
 from hy3dgen.texgen import Hunyuan3DPaintPipeline
 from hy3dgen.text2image import HunyuanDiTPipeline
 
+# At the top of the imports section, add this to ensure headless OpenCV is used
+import os
+os.environ['OPENCV_IO_ENABLE_JASPER']='true'  # Needed for some image formats with headless OpenCV
+
 LOGDIR = '.'
 
 server_error_msg = "**NETWORK ERROR DUE TO HIGH TRAFFIC. PLEASE REGENERATE OR REFRESH THIS PAGE.**"
