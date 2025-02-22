@@ -50,5 +50,12 @@ COPY . .
 # Expose the port Gradio runs on (typically 7860)
 EXPOSE 8000
 
+# Install system dependencies for PyMeshLab
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+
 # Command to run the Gradio app
 CMD ["python", "api_server.py"]
