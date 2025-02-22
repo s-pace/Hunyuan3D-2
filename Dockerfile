@@ -1,5 +1,5 @@
 # Use NVIDIA CUDA base image with Python support
-FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
+FROM registry.hf.space/tencent-hunyuan3d-2:latest
 
 # Set up Python environment
 ENV PYTHON_VERSION=3.11
