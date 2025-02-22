@@ -153,13 +153,23 @@ class ModelWorker:
         self.model_path = model_path
         self.worker_id = worker_id
         self.device = device
+        self.initialized = False
         logger.info(f"Loading the model {model_path} on worker {worker_id} ...")
 
-        self.rembg = BackgroundRemover()
-        self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path, device=device)
-        self.pipeline_t2i = HunyuanDiTPipeline('Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
-                                               device=device)
-        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(model_path)
+        try:
+            self.rembg = BackgroundRemover()
+            self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path, device=device)
+            self.pipeline_t2i = HunyuanDiTPipeline('Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
+                                                  device=device)
+            self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(model_path)
+            self.initialized = True
+            logger.info("Model initialization completed successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize model: {str(e)}")
+            raise
+
+    def is_healthy(self):
+        return self.initialized and torch.cuda.is_available() if self.device == 'cuda' else self.initialized
 
     def get_queue_length(self):
         if model_semaphore is None:
@@ -231,6 +241,20 @@ app.add_middleware(
     allow_headers=["*"],  # 允许所有头部
 )
 
+@app.get("/health")
+async def health_check():
+    try:
+        if not worker.is_healthy():
+            return JSONResponse(
+                {"status": "unhealthy", "reason": "Model not properly initialized"},
+                status_code=503
+            )
+        return {"status": "healthy"}
+    except Exception as e:
+        return JSONResponse(
+            {"status": "unhealthy", "reason": str(e)},
+            status_code=503
+        )
 
 @app.post("/generate")
 async def generate(request: Request):
