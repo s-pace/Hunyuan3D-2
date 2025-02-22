@@ -4,7 +4,7 @@ pybind11
 # Core ML dependencies
 diffusers
 einops
-opencv-python-headless==4.2.0.32
+opencv-python-headless==4.11.0.86
 numpy
 torch
 transformers
