@@ -1,9 +1,11 @@
 ninja
 pybind11
 
+# Core ML dependencies
 diffusers
 einops
 opencv-python-headless
+libgl1-mesa-glx
 numpy
 torch
 transformers
