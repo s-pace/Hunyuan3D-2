@@ -37,5 +37,8 @@ RUN python3 -c "from huggingface_hub import snapshot_download; snapshot_download
 # Copy application code
 COPY . .
 
+# Expose port 7860 for the Gradio app
+EXPOSE 8000
+
 # Run the application
-CMD ["python3", "api_server.py"]
+CMD ["python3", "hg_app.py"]
