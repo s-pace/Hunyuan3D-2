@@ -658,10 +658,7 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_path", type=str, default='tencent/Hunyuan3D-2mini')
-    parser.add_argument("--subfolder", type=str, default='hunyuan3d-dit-v2-mini-turbo')
-    parser.add_argument("--texgen_model_path", type=str, default='tencent/Hunyuan3D-2')
-    parser.add_argument('--port', type=int, default=8080)
+    parser.add_argument('--port', type=int, default=8000)
     parser.add_argument('--host', type=str, default='0.0.0.0')
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--mc_algo', type=str, default='mc')

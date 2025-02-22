@@ -40,7 +40,7 @@ class Hunyuan3DProperties(bpy.types.PropertyGroup):
     api_url: StringProperty(
         name="API URL",
         description="URL of the Text-to-3D API service",
-        default="http://localhost:8080"
+        default="http://localhost:8000"
     )
     is_processing: BoolProperty(
         name="Processing",
