@@ -4,7 +4,8 @@ pybind11
 # Core ML dependencies
 diffusers
 einops
-opencv-python-headless
+# Replacing opencv-python-headless with opencv-python-headless plus required system packages
+opencv-contrib-python-headless
 numpy
 torch
 transformers
