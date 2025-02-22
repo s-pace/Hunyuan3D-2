@@ -17,19 +17,15 @@ RUN apt-get update && apt-get install -y \
     python${PYTHON_VERSION}-distutils \
     curl \
     # OpenCV and GL dependencies
+    nvidia-utils-525 \
+    libnvidia-gl-525 \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-dev \
-    ffmpeg \
     libxrender1 \
-    libgl1 \
-    mesa-utils \
-    # Additional dependencies that might be needed
     libglu1-mesa \
-    libglu1-mesa-dev \
-    libgl1-mesa-dev \
+    ffmpeg \
     && curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
