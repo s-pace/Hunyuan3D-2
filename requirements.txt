@@ -3,7 +3,7 @@ pybind11
 
 diffusers
 einops
-opencv-python
+opencv-python-headless
 numpy
 torch
 transformers
