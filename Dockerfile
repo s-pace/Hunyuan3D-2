@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libfontconfig1 \
     libxrender1 \
+    # Ensure libGL.so.1 is installed
     libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
