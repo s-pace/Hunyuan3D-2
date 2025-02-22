@@ -31,6 +31,15 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-dri \
     libglx0 \
     libegl1 \
+    # Add PyMeshLab specific dependencies
+    libglu1 \
+    libxcb-xinerama0 \
+    libxkbcommon-x11-0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
     && curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
@@ -53,12 +62,13 @@ RUN pip3 install -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
-# Expose the port Gradio runs on (typically 7860)
+# Expose port 8000
 EXPOSE 8000
 
-# Remove redundant PyMeshLab dependencies section since we already have the necessary GL libraries
-# Set environment variable for OpenGL
+# Set environment variables for OpenGL
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,graphics
+ENV PYTHONPATH=/app
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
-# Command to run the Gradio app
+# Command to run the app
 CMD ["python", "api_server.py"]
