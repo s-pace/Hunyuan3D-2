@@ -7,7 +7,7 @@ WORKDIR /app
 # Set Python version explicitly
 ENV PYTHON_VERSION=3.11
 
-# Install Python 3.11 and pip
+# Install Python 3.11, pip, and OpenCV dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     && add-apt-repository ppa:deadsnakes/ppa \
@@ -22,6 +22,13 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    # Add additional OpenCV dependencies
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libglib2.0-0 \
+    libgl1 \
     && curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
