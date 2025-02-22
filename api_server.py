@@ -17,20 +17,14 @@ from io import BytesIO
 import torch
 import trimesh
 import uvicorn
-import yaml
 from PIL import Image
-from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline, FloaterRemover, DegenerateFaceRemover, FaceReducer
 from hy3dgen.texgen import Hunyuan3DPaintPipeline
 from hy3dgen.text2image import HunyuanDiTPipeline
-
-# At the top of the imports section, add this to ensure headless OpenCV is used
-import os
-os.environ['OPENCV_IO_ENABLE_JASPER']='true'  # Needed for some image formats with headless OpenCV
 
 LOGDIR = '.'
 
@@ -142,17 +136,10 @@ class ModelWorker:
         logger.info(f"Loading the model {model_path} on worker {worker_id} ...")
 
         self.rembg = BackgroundRemover()
-        self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
-            "tencent/Hunyuan3D-2",
-            device=device
-        )
-        self.pipeline_t2i = HunyuanDiTPipeline(
-            'Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
-            device=device
-        )
-        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(
-            "tencent/Hunyuan3D-2"
-        )
+        self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path, device=device)
+        self.pipeline_t2i = HunyuanDiTPipeline('Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
+                                               device=device)
+        self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(model_path)
 
     def get_queue_length(self):
         if model_semaphore is None:
@@ -213,24 +200,9 @@ class ModelWorker:
 
 app = FastAPI()
 
-# Initialize security scheme
-security = HTTPBearer()
-
-# Define the auth token
-AUTH_TOKEN = "robbinhasasmalldickbutyetheisagreatcollaboratortowrokwith"
-
-# Add this function to verify the token
-async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    if credentials.credentials != AUTH_TOKEN:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid authentication token"
-        )
-    return credentials.credentials
-
 
 @app.post("/generate")
-async def generate(request: Request, token: str = Depends(verify_token)):
+async def generate(request: Request):
     logger.info("Worker generating...")
     params = await request.json()
     uid = uuid.uuid4()
@@ -263,7 +235,7 @@ async def generate(request: Request, token: str = Depends(verify_token)):
 
 
 @app.post("/send")
-async def generate(request: Request, token: str = Depends(verify_token)):
+async def generate(request: Request):
     logger.info("Worker send...")
     params = await request.json()
     uid = uuid.uuid4()
@@ -288,7 +260,7 @@ async def status(uid: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--port", type=int, default=8081)
     parser.add_argument("--model_path", type=str, default='tencent/Hunyuan3D-2')
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--limit-model-concurrency", type=int, default=5)
