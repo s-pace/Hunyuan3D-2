@@ -4,8 +4,8 @@ pybind11
 # Core ML dependencies
 diffusers
 einops
-# Replacing opencv-python-headless with opencv-python-headless plus required system packages
-opencv-contrib-python-headless
+# Note: For opencv to work, system packages libgl1-mesa-glx and libglib2.0-0 must be installed
+opencv-python-headless  # Changed from opencv-contrib-python-headless to reduce dependencies
 numpy
 torch
 transformers
