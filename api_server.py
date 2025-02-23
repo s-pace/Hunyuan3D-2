@@ -32,8 +32,10 @@ import torch
 import trimesh
 import uvicorn
 from PIL import Image
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from google.cloud import secretmanager
 
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline, FloaterRemover, DegenerateFaceRemover, FaceReducer, \
@@ -231,18 +233,32 @@ class ModelWorker:
 
 
 app = FastAPI()
-from fastapi.middleware.cors import CORSMiddleware
+security = HTTPBearer()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 你可以指定允许的来源
-    allow_credentials=True,
-    allow_methods=["*"],  # 允许所有方法
-    allow_headers=["*"],  # 允许所有头部
-)
+def get_secret():
+    client = secretmanager.SecretManagerServiceClient()
+    name = "projects/your-project-id/secrets/api-bearer-token/versions/latest"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")
+
+# Fetch secret at startup
+try:
+    BEARER_TOKEN = get_secret()
+except Exception as e:
+    logger.error(f"Failed to fetch secret: {e}")
+    BEARER_TOKEN = os.getenv('SECRET', 'secret')  # Fallback
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if credentials.credentials != BEARER_TOKEN:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return credentials.credentials
 
 @app.get("/health")
-async def health_check():
+async def health_check(token: str = Depends(verify_token)):
     try:
         if not worker.is_healthy():
             return JSONResponse(
@@ -257,7 +273,7 @@ async def health_check():
         )
 
 @app.post("/generate")
-async def generate(request: Request):
+async def generate(request: Request, token: str = Depends(verify_token)):
     logger.info("Worker generating...")
     params = await request.json()
     uid = uuid.uuid4()
@@ -290,7 +306,7 @@ async def generate(request: Request):
 
 
 @app.post("/send")
-async def generate(request: Request):
+async def generate(request: Request, token: str = Depends(verify_token)):
     logger.info("Worker send...")
     params = await request.json()
     uid = uuid.uuid4()
@@ -300,7 +316,7 @@ async def generate(request: Request):
 
 
 @app.get("/status/{uid}")
-async def status(uid: str):
+async def status(uid: str, token: str = Depends(verify_token)):
     save_file_path = os.path.join(SAVE_DIR, f'{uid}.glb')
     print(save_file_path, os.path.exists(save_file_path))
     if not os.path.exists(save_file_path):
