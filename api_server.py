@@ -27,6 +27,7 @@ import threading
 import traceback
 import uuid
 from io import BytesIO
+from pathlib import Path
 
 import torch
 import trimesh
@@ -44,9 +45,22 @@ from hy3dgen.texgen import Hunyuan3DPaintPipeline
 from hy3dgen.text2image import HunyuanDiTPipeline
 
 LOGDIR = '.'
-# Set HuggingFace cache directory to reuse downloaded models
-os.environ['HF_HOME'] = os.path.expanduser('~/.cache/huggingface')
-os.environ['HY3DGEN_MODELS'] = os.path.expanduser('~/.cache/hy3dgen')
+
+# Set cache directories using user's home directory
+HOME = str(Path.home())
+CACHE_DIR = os.path.join(HOME, '.cache')
+HF_CACHE = os.path.join(CACHE_DIR, 'huggingface')
+HY3D_CACHE = os.path.join(CACHE_DIR, 'hy3dgen')
+
+# Ensure cache directories exist
+os.makedirs(HF_CACHE, exist_ok=True)
+os.makedirs(HY3D_CACHE, exist_ok=True)
+
+# Set environment variables
+os.environ['HF_HOME'] = HF_CACHE
+os.environ['HY3DGEN_MODELS'] = HY3D_CACHE
+os.environ['TRANSFORMERS_CACHE'] = os.path.join(HF_CACHE, 'transformers')
+os.environ['HUGGINGFACE_HUB_CACHE'] = os.path.join(HF_CACHE, 'hub')
 
 server_error_msg = "**NETWORK ERROR DUE TO HIGH TRAFFIC. PLEASE REGENERATE OR REFRESH THIS PAGE.**"
 moderation_msg = "YOUR INPUT VIOLATES OUR CONTENT MODERATION GUIDELINES. PLEASE TRY AGAIN."
