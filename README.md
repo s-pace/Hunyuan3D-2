@@ -333,3 +333,38 @@ exploration.
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Tencent/Hunyuan3D-2&type=Date" />
  </picture>
 </a>
+
+
+
+# Deploying.
+
+Make sure to properly install the project with:
+
+```sh
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install -y python3-pip git wget
+git clone https://github.com/s-pace/Hunyuan3D-2.git
+cd ./Hunyuan3D-2
+pip install -r requirements.txt
+# for texture
+cd hy3dgen/texgen/custom_rasterizer
+python3 setup.py install
+cd ../../..
+cd hy3dgen/texgen/differentiable_renderer
+python3 setup.py install
+```
+
+If:
+> WARNING: Some requests generated warnings:
+>  - Disk size: '100 GB' is larger than image size: '50 GB'. You might need to resize the root repartition manually if the operating system does not support automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd for details.
+  
+```sh
+sudo growpart /dev/sda 1 && sudo resize2fs /dev/sda1
+```
+
+If:
+> PermissionError: [Errno 13] Permission denied: 'gradio_cache'
+
+```sh
+sudo mkdir -p gradio_cache && sudo chmod 777 gradio_cache
+```
