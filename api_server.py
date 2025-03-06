@@ -44,6 +44,9 @@ from hy3dgen.texgen import Hunyuan3DPaintPipeline
 from hy3dgen.text2image import HunyuanDiTPipeline
 
 LOGDIR = '.'
+# Set HuggingFace cache directory to reuse downloaded models
+os.environ['HF_HOME'] = os.path.expanduser('~/.cache/huggingface')
+os.environ['HY3DGEN_MODELS'] = os.path.expanduser('~/.cache/hy3dgen')
 
 server_error_msg = "**NETWORK ERROR DUE TO HIGH TRAFFIC. PLEASE REGENERATE OR REFRESH THIS PAGE.**"
 moderation_msg = "YOUR INPUT VIOLATES OUR CONTENT MODERATION GUIDELINES. PLEASE TRY AGAIN."
@@ -159,16 +162,39 @@ class ModelWorker:
         logger.info(f"Loading the model {model_path} on worker {worker_id} ...")
 
         try:
+            # Force local loading first
+            local_cache = os.path.expanduser('~/.cache/huggingface/hub')
+            if os.path.exists(local_cache):
+                logger.info(f"Using local cache from {local_cache}")
+            
+            self.rembg = BackgroundRemover()
+            self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
+                model_path, 
+                device=device,
+                local_files_only=True  # Try to use local files first
+            )
+            self.pipeline_t2i = HunyuanDiTPipeline(
+                'Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
+                device=device,
+                local_files_only=True
+            )
+            self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(
+                model_path,
+                local_files_only=True
+            )
+            self.initialized = True
+            logger.info("Model initialization completed successfully using local cache")
+        except Exception as e:
+            logger.error(f"Failed to initialize model from local cache, error: {str(e)}")
+            logger.info("Attempting to download models...")
+            # If local loading fails, try downloading
             self.rembg = BackgroundRemover()
             self.pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path, device=device)
             self.pipeline_t2i = HunyuanDiTPipeline('Tencent-Hunyuan/HunyuanDiT-v1.1-Diffusers-Distilled',
                                                   device=device)
             self.pipeline_tex = Hunyuan3DPaintPipeline.from_pretrained(model_path)
             self.initialized = True
-            logger.info("Model initialization completed successfully")
-        except Exception as e:
-            logger.error(f"Failed to initialize model: {str(e)}")
-            raise
+            logger.info("Model initialization completed successfully after download")
 
     def is_healthy(self):
         return self.initialized and torch.cuda.is_available() if self.device == 'cuda' else self.initialized
