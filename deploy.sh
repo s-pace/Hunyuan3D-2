@@ -34,7 +34,6 @@ chmod 755 /var/log/hunyuan3d
 
 # Install system dependencies
 apt-get update && apt-get upgrade -y
-apt-get install -y python3-pip git wget nvidia-driver-525 nvidia-cuda-toolkit
 
 # Clone the repository if it doesn't exist
 if [ ! -d "/root/Hunyuan3D-2" ]; then
