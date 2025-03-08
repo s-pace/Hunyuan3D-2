@@ -15,7 +15,7 @@ torchvision
 #ipdb
 omegaconf
 
-#sentencepiece
+sentencepiece
 tqdm
 
 # Mesh Processing

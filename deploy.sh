@@ -24,10 +24,57 @@ gcloud compute instances create hunyuan3d-vm \
     --shielded-integrity-monitoring \
     --labels=goog-ec-src=vm_add-gcloud
 
-# Set the command to run when starting the instance
+# Create the startup script in a separate file
+cat > startup-script.sh << 'EOF'
+#!/bin/bash
+
+# Create a log directory with proper permissions
+mkdir -p /var/log/hunyuan3d
+chmod 755 /var/log/hunyuan3d
+
+# Install system dependencies
+apt-get update && apt-get upgrade -y
+apt-get install -y python3-pip git wget nvidia-driver-525 nvidia-cuda-toolkit
+
+# Clone the repository if it doesn't exist
+if [ ! -d "/root/Hunyuan3D-2" ]; then
+    cd /root
+    git clone https://github.com/s-pace/Hunyuan3D-2.git
+    cd Hunyuan3D-2
+    
+    # Install Python dependencies
+    pip install -r requirements.txt
+    
+    # Install texture dependencies
+    cd hy3dgen/texgen/custom_rasterizer
+    python3 setup.py install
+    cd ../../..
+    cd hy3dgen/texgen/differentiable_renderer
+    python3 setup.py install
+    cd ../../..
+fi
+
+# Set working directory and environment
+cd /root/Hunyuan3D-2
+
+# Set up environment variables
+export SECRET="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
+echo "SECRET=$SECRET" > .env
+
+# Run the server as root with proper logging
+python3 api_server.py --host 0.0.0.0 --port 8000 >> /var/log/hunyuan3d/server.log 2>&1
+EOF
+
+# Set the startup script as metadata
 gcloud compute instances add-metadata hunyuan3d-vm \
     --zone=europe-west4-c \
-    --metadata=startup-script-command="cd /home/$(whoami)/Hunyuan3D-2 && export SECRET=yoursupersecretkey && python api_server.py"
+    --metadata-from-file=startup-script=startup-script.sh
 
+# Clean up the temporary script
+rm startup-script.sh
+
+# Start the instance
 gcloud compute instances start hunyuan3d-vm
+
+# SSH into the instance
 gcloud compute ssh hunyuan3d-vm
